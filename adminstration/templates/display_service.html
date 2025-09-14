@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+{% extends 'index.html' %}
+{% block content %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table width="100%">
+    <tr>
+        <th>SERVICE NAME</th>
+        <th>DESCRIPTION</th>
+        <th>IMAGE</th>
+    </tr>
+{% for i in ser %}
+    <tr>
+        <td>{{i.servicename}}</td>
+        <td>{{i.description}}</td>
+        <td>
+            <img src="{{i.image.url}}" width="50px" height="50px" style="border-radius:30px">
+        </td>
+        <td>
+            <a href="{% url 'edit_ser' ser_id=i.id %}">
+                <button type="submit" class="btn btn-primary mr-2">EDIT</button>
+            </a>
+        </td>
+        <td><a href="{% url 'delete_ser' ser_id=i.id %}">
+                    <button type="submit" class="btn btn-danger mr-2">DELETE</button>
+                </a></td>
+    </tr>
+    {% endfor %}
+
+</table>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+{% if messages %}
+{% for i in messages %}
+{% if i.tags == 'warning' %}
+<script>
+  swal('{{i}}','','warning')
+</script>
+{% elif i.tags == 'error' %}
+<script>
+   swal('{{i}}','','error')
+</script>
+{% elif i.tags == 'success' %}
+<script>
+   swal('{{i}}','','success')
+
+</script>
+{% else %}
+<script>
+  swal('{{i}}','','info')
+</script>
+{% endif %}
+{% endfor %}
+{% endif %}
+
+</body>
+</html>
+{% endblock %}

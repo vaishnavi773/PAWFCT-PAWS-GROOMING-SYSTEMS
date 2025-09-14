@@ -6,8 +6,8 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 # 🏠 Home View
-def home_view(request):
-    return render(request, "index.html")
+def indexpage(request):
+    return render(request, "indexfront.html")
 
 # 🟢 Register View
 def register_view(request):
