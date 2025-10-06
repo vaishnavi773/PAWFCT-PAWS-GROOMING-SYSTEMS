@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Pet Details</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f9fafb; min-height: 100vh; padding: 2rem 1rem; }
+.container { max-width: 672px; margin: 0 auto; background: white; border-radius: 0.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1),0 4px 6px -2px rgba(0,0,0,0.05); padding: 2rem; }
+.title { font-size: 1.5rem; font-weight: bold; color: #1f2937; text-align: center; margin-bottom: 2rem; }
+.form-section { margin-bottom: 1.5rem; }
+.label { display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.75rem; }
+.pet-type-container { display: flex; gap: 1rem; }
+.pet-type-option { flex: 1; border: 2px solid #e5e7eb; border-radius: 0.5rem; padding: 1rem; cursor: pointer; text-align: center; transition: all 0.2s ease; background: white; }
+.pet-type-option:hover { border-color: #d1d5db; }
+.pet-type-option.selected { border-color: #f97316; background-color: #fff7ed; }
+.input-field { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 1rem; transition: all 0.2s ease; }
+.input-field:focus { outline: none; border-color: #f97316; box-shadow: 0 0 0 2px rgba(249,115,22,0.2); }
+.breed-container { position: relative; }
+.breed-dropdown { position: absolute; z-index: 10; width: 100%; background: white; border: 1px solid #d1d5db; border-radius: 0.375rem; margin-top: 0.25rem; max-height: 12rem; overflow-y: auto; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: none; }
+.breed-dropdown.show { display: block; }
+.breed-option { padding: 0.5rem 0.75rem; cursor: pointer; transition: background-color 0.2s ease; }
+.breed-option:hover { background-color: #f3f4f6; }
+.no-breeds { color: #6b7280; font-size: 0.875rem; margin-top: 0.25rem; }
+.button-group { display: flex; gap: 1rem; flex-wrap: wrap; }
+.button-option { flex: 1; padding: 0.75rem 1rem; border: 2px solid #e5e7eb; border-radius: 0.375rem; font-weight: 500; cursor: pointer; background: white; color: #374151; transition: all 0.2s ease; }
+.button-option:hover { border-color: #d1d5db; }
+.button-option.selected { border-color: #f97316; background-color: #fff7ed; color: #c2410c; }
+.submit-button { width: 100%; background-color: #f97316; color: white; padding: 0.75rem 1rem; border: none; border-radius: 0.375rem; font-weight: 500; cursor: pointer; transition: background-color 0.2s ease; margin-top: 1.5rem; text-align:center; display:inline-block; }
+.submit-button:hover { background-color: #ea580c; }
+.error-message { color: #ef4444; font-size: 0.875rem; margin-top: 0.25rem; }
+@media (max-width: 640px) {
+    .container { margin: 0; border-radius: 0; padding: 1.5rem; }
+    .button-group { flex-direction: column; gap: 0.5rem; }
+    .pet-type-container { flex-direction: column; gap: 0.5rem; }
+}
+</style>
+</head>
+<body>
+
+<form id="pet-form" method="POST">
+{% csrf_token %}
+<div class="container">
+<h1 class="title">Add Pet Details</h1>
+
+<!-- Owner Name -->
+<div class="form-section">
+    <label class="label" for="owner-name">Owner Name</label>
+    <input type="text" id="owner-name" class="input-field" 
+           value="{{ username }}" readonly>
+</div>
+
+<!-- Pet Type -->
+<div class="form-section">
+    <label class="label">What type of pet?</label>
+    <div class="pet-type-container">
+        <div class="pet-type-option" data-value="Cat">🐱 Cat</div>
+        <div class="pet-type-option" data-value="Dog">🐕 Dog</div>
+    </div>
+    <div class="error-message" id="pet-type-error" style="display:none;">Please select pet type</div>
+</div>
+
+<!-- Pet Name -->
+<div class="form-section">
+    <label class="label" for="pet-name">Name of your pet?</label>
+    <input type="text" id="pet-name" class="input-field" placeholder="Enter pet name" required>
+</div>
+
+<!-- Breed -->
+<div class="form-section">
+    <label class="label" for="breed-search">Breed of your pet?</label>
+    <div class="breed-container">
+        <input type="text" id="breed-search" class="input-field" placeholder="Search breed here" required>
+        <div id="breed-dropdown" class="breed-dropdown"></div>
+        <div id="no-breeds" class="error-message" style="display:none;">No Breeds Found</div>
+    </div>
+</div>  
+
+<!-- Gender -->
+<div class="form-section">
+    <label class="label">Gender of your pet?</label>
+    <div class="button-group" data-group="gender">
+        <button type="button" class="button-option" data-value="Female">Female</button>
+        <button type="button" class="button-option" data-value="Male">Male</button>
+    </div>
+    <div class="error-message" id="gender-error" style="display:none;">Please select gender</div>
+</div>
+
+<!-- Age -->
+<div class="form-section">
+    <label class="label">How old is your pet?</label>
+    <div class="button-group" data-group="age">
+        <button type="button" class="button-option" data-value="<3 Months">&lt;3 Months</button>
+        <button type="button" class="button-option" data-value="<11 Years">&lt;11 Years</button>
+        <button type="button" class="button-option" data-value="11+ Years">11+ Years</button>
+    </div>
+    <div class="error-message" id="age-error" style="display:none;">Please select age</div>
+</div>
+
+<!-- Service Input -->
+<div class="form-section">
+    <label class="label" for="service-name">Service Selected</label>
+    <input type="text" id="service-name" class="input-field" value="{{ service_name }}" readonly>
+</div>
+
+<!-- Date -->
+<div class="form-section">
+    <label class="label" for="service-date">Select Booking Date</label>
+    <input type="date" id="service-date" class="input-field" required>
+</div>
+
+<!-- Time Slot -->
+<div class="form-section" id="time-slot-section" style="display:none;">
+    <label class="label">Available Time Slots</label>
+    <div class="button-group" id="time-slots"></div>
+</div>
+
+<!-- Total + Pay -->
+<div class="form-section total-section">
+    <div class="total-container">
+        <span class="total-label">Total Price:</span>
+        <input type="number" id="total-price" class="input-field" value="{{ service_price }}" readonly>
+    </div>
+    <button type="button" class="submit-button" id="pay-button">Pay</button>
+</div>
+
+<!-- Back to Home -->
+<div class="form-section" style="text-align: center; margin-top: 20px;">
+    <a href="{% url 'indexpage' %}">🏠 Back to Home</a>
+</div>
+</div>
+</form>
+
+<script>
+let formData = { petType:'', name:'', breed:'', gender:'', age:'' };
+
+// Breed lists
+const breedsByType = {
+    Dog: ['Labrador Retriever','Golden Retriever','German Shepherd','Bulldog','Beagle','Rottweiler','Pug','Dachshund','Siberian Husky','Indian Pariah Dog'],
+    Cat: ['Persian','Maine Coon','British Shorthair','Ragdoll','Bengal','Siamese','Indian Domestic Cat','Abyssinian','Russian Blue','Scottish Fold']
+};  
+
+// Pet type selection
+document.querySelectorAll('.pet-type-option').forEach(option=>{
+    option.addEventListener('click', function(){
+        document.querySelectorAll('.pet-type-option').forEach(opt=>opt.classList.remove('selected'));
+        this.classList.add('selected');
+        formData.petType = this.dataset.value;
+        document.getElementById('pet-type-error').style.display='none';
+        breedSearch.value = '';
+        breedDropdown.innerHTML = '';
+    });
+});
+
+// Pet name input
+document.getElementById('pet-name').addEventListener('input', function(){ formData.name=this.value; });
+
+// Breed search
+const breedSearch = document.getElementById('breed-search');
+const breedDropdown = document.getElementById('breed-dropdown');
+const noBreedsMessage = document.getElementById('no-breeds');
+
+breedSearch.addEventListener('input', function(){
+    const searchValue = this.value.toLowerCase();
+    if(!formData.petType){
+        noBreedsMessage.style.display='block';
+        noBreedsMessage.textContent='Select pet type first';
+        return;
+    }
+    const breeds = breedsByType[formData.petType];
+    const filtered = breeds.filter(b=>b.toLowerCase().includes(searchValue));
+    if(filtered.length){ 
+        breedDropdown.innerHTML = filtered.map(b=>`<div class="breed-option" onclick="selectBreed('${b}')">${b}</div>`).join('');
+        breedDropdown.classList.add('show'); 
+        noBreedsMessage.style.display='none';
+    } else { 
+        breedDropdown.classList.remove('show'); 
+        noBreedsMessage.style.display='block'; 
+        noBreedsMessage.textContent='No Breeds Found'; 
+    }
+});
+function selectBreed(breed){ breedSearch.value=breed; formData.breed=breed; breedDropdown.classList.remove('show'); }
+
+// Gender & age selection
+document.querySelectorAll('.button-group').forEach(group=>{
+    const buttons = group.querySelectorAll('.button-option');
+    const groupName = group.dataset.group;
+    buttons.forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+            buttons.forEach(b=>b.classList.remove('selected'));
+            btn.classList.add('selected');
+            formData[groupName] = btn.dataset.value;
+        });
+    });
+});
+
+// Time slots
+const dateInput = document.getElementById("service-date");
+const timeSlotSection = document.getElementById("time-slot-section");
+const timeSlotContainer = document.getElementById("time-slots");
+let selectedSlot = null;
+const today = new Date().toISOString().split("T")[0];
+dateInput.setAttribute("min", today);
+
+const availableSlots = ["10:00 AM","11:00 AM","12:00 PM","1:00 PM","2:00 PM","3:00 PM","4:00 PM"];
+
+// Fetch booked slots from backend
+async function fetchBookedSlots(date){
+    try {
+        const response = await fetch(`/booked-slots/{{ service_id }}/?date=${date}`);
+        const data = await response.json();
+        return data.slots || [];
+    } catch(err){
+        console.error("Error fetching booked slots:", err);
+        return [];
+    }
+}
+
+// Render time slots
+function renderTimeSlots(bookedSlotsByDate){
+    timeSlotContainer.innerHTML = "";
+
+    const normalizedBooked = bookedSlotsByDate.map(s => s.trim().toUpperCase());
+
+    availableSlots.forEach(slot=>{
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.classList.add("button-option");
+        btn.textContent = slot;
+
+        // Reset styles
+        btn.disabled = false;
+        btn.style.backgroundColor = "";
+        btn.style.cursor = "pointer";
+
+        // Check if slot is booked
+       if(normalizedBooked.includes(slot.toUpperCase())){
+    btn.disabled = true;
+    btn.style.backgroundColor = "red";
+    btn.style.cursor = "not-allowed";
+        } else {
+            btn.addEventListener("click", ()=>{
+                document.querySelectorAll("#time-slots .button-option").forEach(b=>b.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedSlot = slot;
+            });
+        }
+        timeSlotContainer.appendChild(btn);
+    });
+}
+
+// On date change
+dateInput.addEventListener("change", async ()=>{
+    if(!dateInput.value) return;
+
+    timeSlotSection.style.display = "block";
+    selectedSlot = null;
+
+    const bookedSlots = await fetchBookedSlots(dateInput.value);
+    renderTimeSlots(bookedSlots);
+});
+
+// On page load, fetch booked slots if date already selected
+window.addEventListener('DOMContentLoaded', async ()=>{
+    if(dateInput.value){
+        timeSlotSection.style.display = "block";
+        const bookedSlots = await fetchBookedSlots(dateInput.value);
+        renderTimeSlots(bookedSlots);
+    }
+});
+
+// Save booking & redirect
+document.getElementById('pay-button').addEventListener('click', async function(){
+    if(!formData.petType){ document.getElementById('pet-type-error').style.display='block'; return; }
+    if(!formData.name || !formData.breed || !formData.gender || !formData.age){ alert('Please complete all pet details.'); return; }
+    if(!dateInput.value){ alert('Please select a date'); return; }
+    if(!selectedSlot){ alert('Please select a time slot'); return; }
+
+    const bookingData = {
+        pet_name: formData.name,
+        pet_type: formData.petType,
+        breed: formData.breed,
+        gender: formData.gender,
+        age: formData.age,
+        date: dateInput.value,
+        time_slot: selectedSlot,
+        csrfmiddlewaretoken: '{{ csrf_token }}'
+    };
+
+    try {
+        const response = await fetch("{% url 'save_booking' service_id=service_id %}", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-CSRFToken": bookingData.csrfmiddlewaretoken },
+            body: JSON.stringify(bookingData)
+        });
+        const data = await response.json();
+
+        if (data.success) {
+    // Use updated slots from backend response
+    renderTimeSlots(data.slots || []);
+    alert("✅ Booking saved! Slot is now blocked for everyone. Redirecting to payment...");
+    setTimeout(() => {
+        window.location.href = "{% url 'checkout' service_id=service_id %}";
+    }, 400);
+} else {
+    alert(data.error || "Failed to save booking. Please try again.");
+}
+
+    } catch(err){
+        console.error("Error:", err);
+        alert("Something went wrong. Please try again.");
+    }
+});
+</script>
+
+
+
+</body>
+</html>
+

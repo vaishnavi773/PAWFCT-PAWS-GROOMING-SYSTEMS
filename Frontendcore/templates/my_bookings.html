@@ -1,0 +1,34 @@
+<h2>My Booked Services</h2>
+
+{% if bookings %}
+<table border="1" cellpadding="8">
+  <tr>
+    <th>Service</th>
+    <th>Pet Name</th>
+    <th>Type</th>
+    <th>Breed</th>
+    <th>Gender</th>
+    <th>Age</th>
+    <th>Date</th>
+    <th>Time Slot</th>
+    <th>Status</th>
+    <th>Created</th>
+  </tr>
+  {% for b in bookings %}
+  <tr>
+    <td>{{ b.service.servicename }}</td>
+    <td>{{ b.pet_name }}</td>
+    <td>{{ b.pet_type }}</td>
+    <td>{{ b.breed }}</td>
+    <td>{{ b.gender }}</td>
+    <td>{{ b.age }}</td>
+    <td>{{ b.date }}</td>
+    <td>{{ b.time_slot }}</td>
+    <td>{{ b.status }}</td>
+    <td>{{ b.created_at|date:"Y-m-d H:i" }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p>You have no booked services yet.</p>
+{% endif %}

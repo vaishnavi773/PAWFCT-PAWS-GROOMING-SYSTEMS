@@ -1,6 +1,10 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.utils import timezone
+from django.conf import settings
+from adminstration.models import serviceDB as Service
+from datetime import date
+
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, name, password=None, **extra_fields):
@@ -17,6 +21,7 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault("is_superuser", True)
         return self.create_user(email, name, password, **extra_fields)
 
+
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     name = models.CharField(max_length=100)
@@ -31,3 +36,29 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+
+class registrationdb(models.Model):
+    name = models.CharField(max_length=100, null=True, blank=True)
+    email = models.EmailField(max_length=100, null=True, blank=True)
+    password = models.CharField(max_length=100, null=True, blank=True)
+
+    def __str__(self):
+        return self.name or self.email
+
+
+class Booking(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    service = models.ForeignKey('adminstration.serviceDB', on_delete=models.CASCADE)
+    pet_name = models.CharField(max_length=100)
+    pet_type = models.CharField(max_length=100, null=True, blank=True)
+    breed = models.CharField(max_length=100, null=True, blank=True)
+    gender = models.CharField(max_length=20, null=True, blank=True)
+    age = models.CharField(max_length=20, null=True, blank=True)
+    date = models.DateField()
+    time_slot = models.CharField(max_length=20)
+    status = models.CharField(max_length=20, default="Booked")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user} - {self.service.servicename} on {self.date} at {self.time_slot}"

@@ -11,84 +11,46 @@
 <form method="post" action="{% url 'save_ser' %}" enctype="multipart/form-data">
   {% csrf_token %}
   <div class="col-12 grid-margin stretch-card">
-              <div class="card">
-                <div class="card-body">
-                  <h4 class="card-title">Adding Services</h4>
-                  <p class="card-description">
-                    SERVICE DETAILS
-                  </p>
-                  <form class="forms-sample">
-                    <div class="form-group">
-                      <label for="exampleInputName1">Service Name</label>
-                      <input type="text" class="form-control" id="exampleInputName1" placeholder="Name" name="name">
-                    </div>
-                    <div class="form-group">
-                      <label >Description</label><br>
-                      <textarea placeholder="description" name="description"></textarea>
-                    </div>
-<!--                    <div class="form-group">-->
-<!--                      <label for="exampleInputPassword4">Password</label>-->
-<!--                      <input type="password" class="form-control" id="exampleInputPassword4" placeholder="Password">-->
-<!--                    </div>-->
-<!--                    <div class="form-group">-->
-<!--                      <label for="exampleSelectGender">Gender</label>-->
-<!--                        <select class="form-control" id="exampleSelectGender">-->
-<!--                          <option>Male</option>-->
-<!--                          <option>Female</option>-->
-<!--                        </select>-->
-<!--                      </div>-->
-                    <div class="form-group">
-                      <label>File upload</label>
-                      <input type="file" name="image">
-<!--                      <div class="input-group col-xs-12">-->
-<!--                        <input type="text" class="form-control file-upload-info" placeholder="Upload Image">-->
-<!--                        <span class="input-group-append">-->
-<!--                          <button class="file-upload-browse btn btn-primary" type="button">Upload</button>-->
-<!--                        </span>-->
-<!--                      </div>-->
-                    </div>
-<!--                    <div class="form-group">-->
-<!--                      <label for="exampleInputCity1">City</label>-->
-<!--                      <input type="text" class="form-control" id="exampleInputCity1" placeholder="Location">-->
-<!--                    </div>-->
-<!--                    <div class="form-group">-->
-<!--                      <label for="exampleTextarea1">Textarea</label>-->
-<!--                      <textarea class="form-control" id="exampleTextarea1" rows="4"></textarea>-->
-<!--                    </div>-->
-                    <button type="submit" class="btn btn-primary mr-2">Submit</button>
-                    <button class="btn btn-light">Cancel</button>
-                  </form>
-                </div>
-              </div>
-            </div>
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Adding Services</h4>
+        <p class="card-description">
+          SERVICE DETAILS
+        </p>
+        
+        <div class="form-group">
+          <label for="exampleInputName1">Service Name</label>
+          <input type="text" class="form-control" id="exampleInputName1" placeholder="Name" name="name" required>
+        </div>
+
+        <div class="form-group">
+          <label>Description</label><br>
+          <textarea class="form-control" placeholder="Description" name="description" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="exampleInputPrice">Price (₹)</label>
+          <input type="number" step="0.01" class="form-control" id="exampleInputPrice" placeholder="Enter Price" name="price" required>
+        </div>
+
+        <div class="form-group">
+          <label>File Upload</label>
+          <input type="file" class="form-control" name="image" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary mr-2">Submit</button>
+        <button type="reset" class="btn btn-light">Cancel</button>
+      </div>
+    </div>
+  </div>
 </form>
 
 
 
 
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-<!--{% if messages %}-->
-<!--{% for i in messages %}-->
-<!--{% if i.tags == 'warning' %}-->
-<!--<script>-->
-<!--  swal('{{i}}','','warning')-->
-<!--</script>-->
-<!--{% elif i.tags == 'error' %}-->
-<!--<script>-->
-<!--   swal('{{i}}','','error')-->
-<!--</script>-->
-<!--{% elif i.tags == 'success' %}-->
-<!--<script>-->
-<!--   swal('{{i}}','','success')-->
 
-<!--</script>-->
-<!--{% else %}-->
-<!--<script>-->
-<!--  swal('{{i}}','','info')-->
-<!--</script>-->
-<!--{% endif %}-->
-<!--{% endfor %}-->
-<!--{% endif %}-->
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
 
 
 </body>

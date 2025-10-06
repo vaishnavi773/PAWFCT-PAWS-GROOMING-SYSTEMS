@@ -1,0 +1,53 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Cancelled</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f9f9f9;
+      color: #333;
+    }
+    .cancel-container {
+      max-width: 600px;
+      margin: 80px auto;
+      padding: 40px;
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
+    }
+    .cancel-icon {
+      font-size: 70px;
+      color: #dc3545;
+    }
+    .btn-retry {
+      margin-top: 20px;
+      display: inline-block;
+      padding: 12px 25px;
+      background: #dc3545;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
+    .btn-retry:hover {
+      background: #c82333;
+    }
+  </style>
+</head>
+<body>
+  <div class="cancel-container">
+    <div class="cancel-icon">❌</div>
+    <h1>Payment Cancelled</h1>
+    <p>Your booking was not completed.  
+    Please try again or contact support if the issue persists.</p>
+    <a href="{% url 'indexpage' %}" class="btn-retry">Try Again</a>
+  </div>
+</body>
+</html>

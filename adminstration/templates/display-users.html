@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+{% extends 'index.html' %}
+{% block content %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User List</title>
+</head>
+<body>
+<table width="100%">
+    <tr>
+        <th>ID</th>
+        <th>NAME</th>
+        <th>EMAIL</th>
+        <th>DATE JOINED</th>
+        <th>STATUS</th>
+    </tr>
+    {% for u in users %}
+    <tr>
+        <td>{{ u.id }}</td>
+        <td>{{ u.name }}</td>
+        <td>{{ u.email }}</td>
+        <td>{{ u.date_joined|date:"Y-m-d H:i" }}</td>
+        <td>
+            {% if u.is_active %}
+                ✅ Active
+            {% else %}
+                ❌ Inactive
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+{% if messages %}
+{% for i in messages %}
+<script>
+  swal('{{i}}','','{{i.tags}}')
+</script>
+{% endfor %}
+{% endif %}
+</body>
+</html>
+{% endblock %}

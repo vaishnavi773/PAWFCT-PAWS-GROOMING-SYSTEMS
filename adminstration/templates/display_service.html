@@ -4,58 +4,55 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Services</title>
 </head>
 <body>
-<table width="100%">
-    <tr>
+<table width="100%" border="1" cellspacing="0" cellpadding="10">
+    <tr style="background:#f4f4f4; text-align:left;">
         <th>SERVICE NAME</th>
         <th>DESCRIPTION</th>
+        <th>PRICE (₹)</th>
         <th>IMAGE</th>
+        <th>ACTIONS</th>
     </tr>
-{% for i in ser %}
+    {% for i in ser %}
     <tr>
-        <td>{{i.servicename}}</td>
-        <td>{{i.description}}</td>
+        <td>{{ i.servicename }}</td>
+        <td>{{ i.description }}</td>
+        <td>₹{{ i.price }}</td>
         <td>
-            <img src="{{i.image.url}}" width="50px" height="50px" style="border-radius:30px">
+            <img src="{{ i.image.url }}" width="60px" height="60px" style="border-radius:8px; object-fit:cover;">
         </td>
         <td>
             <a href="{% url 'edit_ser' ser_id=i.id %}">
-                <button type="submit" class="btn btn-primary mr-2">EDIT</button>
+                <button type="button" class="btn btn-primary btn-sm">EDIT</button>
+            </a>
+            <a href="{% url 'delete_ser' ser_id=i.id %}">
+                <button type="button" class="btn btn-danger btn-sm">DELETE</button>
             </a>
         </td>
-        <td><a href="{% url 'delete_ser' ser_id=i.id %}">
-                    <button type="submit" class="btn btn-danger mr-2">DELETE</button>
-                </a></td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="5" style="text-align:center; padding:20px;">No services available</td>
     </tr>
     {% endfor %}
-
 </table>
+
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 {% if messages %}
-{% for i in messages %}
-{% if i.tags == 'warning' %}
-<script>
-  swal('{{i}}','','warning')
-</script>
-{% elif i.tags == 'error' %}
-<script>
-   swal('{{i}}','','error')
-</script>
-{% elif i.tags == 'success' %}
-<script>
-   swal('{{i}}','','success')
-
-</script>
-{% else %}
-<script>
-  swal('{{i}}','','info')
-</script>
+  {% for i in messages %}
+    {% if i.tags == 'warning' %}
+      <script> swal('{{i}}','','warning') </script>
+    {% elif i.tags == 'error' %}
+      <script> swal('{{i}}','','error') </script>
+    {% elif i.tags == 'success' %}
+      <script> swal('{{i}}','','success') </script>
+    {% else %}
+      <script> swal('{{i}}','','info') </script>
+    {% endif %}
+  {% endfor %}
 {% endif %}
-{% endfor %}
-{% endif %}
-
 </body>
 </html>
 {% endblock %}

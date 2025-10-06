@@ -7,20 +7,27 @@ from django.utils.datastructures import MultiValueDictKeyError
 from adminstration.models import serviceDB
 
 
+
+
 # Create your views here.
 def home_view(request):
     return render(request,'index.html')
+        
 def add_service(request):
     return render(request, "add service.html")
+
 def save_ser(request):
     if request.method == "POST":
         a = request.POST.get('name')
         b = request.POST.get('description')
-        c = request.FILES['image']
-        obj = serviceDB(servicename=a, description=b, image=c)
+        c = request.FILES.get('image')  # safer with .get
+        d = request.POST.get('price')   # <-- new price field
+        obj = serviceDB(servicename=a, description=b, image=c, price=d)
         obj.save()
-        messages.success(request,"Service saved sucessfully")
-        return redirect(add_service)
+        messages.success(request, "Service saved successfully")
+        return redirect('add_service')
+
+    
 def display_ser(request):
     ser = serviceDB.objects.all()
     return render(request, "display_service.html",{'ser':ser})
@@ -28,6 +35,7 @@ def display_ser(request):
 def edit_ser(request, ser_id):
     ser = serviceDB.objects.get(id=ser_id)
     return render(request, "edit_service.html", {'ser': ser})
+
 def update_ser(request, ser_id):
     if request.method == "POST":
         a = request.POST.get('name')
@@ -42,7 +50,7 @@ def update_ser(request, ser_id):
         return redirect(display_ser)
 
 def delete_ser(request, ser_id):
-    ser =serviceDB.objects.filter(id=ser_id)
+    ser = serviceDB.objects.filter(id=ser_id)
     ser.delete()
-    messages.success(request, "Deleted sucessfully")
+    messages.success(request, "Deleted successfully")
     return redirect(display_ser)
