@@ -1,48 +1,168 @@
-<div class="checkout-container">
-    <h2>Checkout - {{ plan }} Plan</h2>
-    <p>Amount: ₹{{ amount|floatformat:2 }}</p>
-
-    <button id="rzp-button1" class="btn btn-pay">Pay with Razorpay</button>
-    <a href="{% url 'payment_failed' %}"><button type="button" class="btn btn-cancel">Cancel</button></a>
-</div>
-
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script>
-document.getElementById('rzp-button1').onclick = function(e) {
-    e.preventDefault();
-
-    var options = {
-        "key": "{{ razorpay_key }}",
-        "amount": "{{ amount }}",
-        "currency": "INR",
-        "name": "Pet Grooming",
-        "description": "{{ plan }} Plan Payment",
-        "order_id": "{{ order_id }}",
-        "theme": { "color": "#F37254" },
-        "handler": function(response){
-            // Minimal data sent to payment_success
-            fetch("{% url 'payment_success' %}", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRFToken": "{{ csrf_token }}"
-                },
-                body: JSON.stringify({
-                    "service_id": "{{ service_id }}",
-                    "razorpay_payment_id": response.razorpay_payment_id,
-                    "razorpay_order_id": response.razorpay_order_id,
-                    "razorpay_signature": response.razorpay_signature
-                })
-            }).then(res => res.text())
-              .then(html => {
-                  document.open();
-                  document.write(html);
-                  document.close();
-              });
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - {{ plan }} Plan</title>
+    <style>
+        /* --- Reset & Base Styles --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
         }
-    };
 
-    var rzp1 = new Razorpay(options);
-    rzp1.open();
-};
-</script>
+        body {
+            background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- Checkout Container --- */
+        .checkout-container {
+            background: #fff;
+            padding: 40px 50px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            animation: fadeIn 0.6s ease;
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0; transform: translateY(-10px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+
+        /* --- Heading --- */
+        .checkout-container h2 {
+            color: #333;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        /* --- Paragraph --- */
+        .checkout-container p {
+            color: #666;
+            font-size: 1rem;
+            margin-bottom: 30px;
+        }
+
+        /* --- Buttons --- */
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 8px;
+        }
+
+        .btn-pay {
+            background: #F37254;
+            color: #fff;
+        }
+
+        .btn-pay:hover {
+            background: #d95b40;
+            transform: scale(1.05);
+        }
+
+        .btn-cancel {
+            background: #ddd;
+            color: #333;
+        }
+
+        .btn-cancel:hover {
+            background: #ccc;
+            transform: scale(1.05);
+        }
+
+        /* --- Footer or Info --- */
+        .footer-text {
+            font-size: 0.9rem;
+            color: #888;
+            margin-top: 20px;
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 480px) {
+            .checkout-container {
+                padding: 30px 20px;
+            }
+
+            .checkout-container h2 {
+                font-size: 1.5rem;
+            }
+
+            .btn {
+                width: 100%;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="checkout-container">
+        <h2>Checkout - {{ plan }} Plan</h2>
+        <p>Amount: ₹{{ amount_rupees|floatformat:2 }}</p>
+
+        <button id="rzp-button1" class="btn btn-pay">Pay with Razorpay</button>
+        <a href="{% url 'payment_failed' %}">
+            <button type="button" class="btn btn-cancel">Cancel</button>
+        </a>
+
+        <div class="footer-text">
+            Secure Payment • Powered by Razorpay
+        </div>
+    </div>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+    document.getElementById('rzp-button1').onclick = function(e) {
+        e.preventDefault();
+
+        var options = {
+            "key": "{{ razorpay_key }}",
+            "amount": "{{ amount_paise }}",
+            "currency": "INR",
+            "name": "Pet Grooming",
+            "description": "{{ plan }} Plan Payment",
+            "order_id": "{{ order_id }}",
+            "theme": { "color": "#F37254" },
+            "handler": function(response){
+                fetch("{% url 'payment_success' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: JSON.stringify({
+                        "service_id": "{{ service_id }}",
+                        "razorpay_payment_id": response.razorpay_payment_id,
+                        "razorpay_order_id": response.razorpay_order_id,
+                        "razorpay_signature": response.razorpay_signature
+                    })
+                }).then(res => res.text())
+                .then(html => {
+                    document.open();
+                    document.write(html);
+                    document.close();
+                });
+            }
+        };
+
+        var rzp1 = new Razorpay(options);
+        rzp1.open();
+    };
+    </script>
+
+</body>
+</html>
