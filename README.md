@@ -123,3 +123,76 @@ python manage.py createsuperuser
 
 # 8. Run the server
 python manage.py runserver
+ pawfect_paws/
+│
+├── pawfect_paws/          # Project configuration files
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+│
+├── grooming_app/          # Main application
+│   ├── models.py
+│   ├── views.py
+│   ├── forms.py
+│   ├── urls.py
+│   ├── templates/
+│   ├── static/
+│   └── admin.py
+│
+├── templates/             # HTML templates
+├── static/                # CSS, JS, Images
+├── manage.py
+├── requirements.txt
+└── README.md📸 Screenshots
+
+(Add screenshots of the interface here)
+Example:
+
+Home Page
+
+Service List
+
+Booking Form
+
+Admin Dashboard
+
+
+
+---
+
+🚀 Future Enhancements
+
+Mobile app version for Android/iOS.
+
+Email and SMS booking notifications.
+
+AI-based grooming recommendations.
+
+Multi-branch support for large grooming centers.
+
+
+
+---
+
+👩‍💻 Contributors
+
+Vaishnavi K. – Developer & Project Author
+
+Contributions are welcome! Feel free to fork and submit pull requests.
+
+
+
+---
+
+📜 License
+
+This project is licensed under the MIT License – see the LICENSE file for details.
+
+
+---
+
+🐾 “Because every pet deserves a Pawfect Groom!”
+
+---
+
+Would you like me to include a **`requirements.txt`** file and a **sample `settings.py` configuration** (with database setup and Razorpay integration)
