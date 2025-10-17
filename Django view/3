@@ -1,0 +1,29 @@
+def save_booking(request, service_id):
+    """Save booking details when user clicks Pay button"""
+    try:
+        data = json.loads(request.body.decode('utf-8'))
+    except Exception:
+        return JsonResponse({"success": False, "error": "Invalid JSON"}, status=400)
+
+    service = get_object_or_404(serviceDB, id=service_id)
+
+    pet_name = data.get("pet_name")
+    pet_type = data.get("pet_type")
+    breed = data.get("breed")
+    gender = data.get("gender")
+    age = data.get("age")
+    date_str = data.get("date")
+    time_slot = data.get("time_slot")
+
+    if not (pet_name and date_str and time_slot):
+        return JsonResponse({"success": False, "error": "Missing required fields"}, status=400)
+
+    try:
+        date_obj = dt.strptime(date_str, "%Y-%m-%d").date()
+    except ValueError:
+        return JsonResponse({"success": False, "error": "Invalid date format"}, status=400)
+
+    # 🚫 Prevent booking same slot (any user, not just same user)
+    if Booking.objects.filter(service=service, date=date_obj, time_slot__iexact=time_slot).exists():
+        return JsonResponse({"success": False, "error": "Slot already booked!"}, status=400)
+        
